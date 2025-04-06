@@ -52,9 +52,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors(apt =>
+{
+    apt.AllowAnyOrigin()
+       .AllowAnyMethod()
+       .AllowAnyHeader()
+       .AllowCredentials()
+       .WithOrigins("http://localhost:4200");
+});
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
