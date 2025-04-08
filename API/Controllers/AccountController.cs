@@ -73,7 +73,7 @@ namespace API.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok("User created successfully");
+            return Ok(new JsonResult(new {title = "Account CReated",  message = "User created successfully"}));
         }
 
         [Authorize]

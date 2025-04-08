@@ -9,7 +9,6 @@
           <input type="text" placeholder="firstName" formControlName="firstName" id="firstName" class="form-control" [class.is-invalid]="submitted && registerForm.get('firstName')?.errors">
           <label for="firstName">FirstName</label>
           <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('firstName')?.hasError('required')">FirstName is requird</span>
-
         </div>
         <div class="form-floating mb-3">
           <input type="text" placeholder="LastName" formControlName="lastName" id="LastName" class="form-control" [class.is-invalid]="submitted && registerForm.get('lastName')?.errors">
@@ -25,8 +24,12 @@
           <input type="text" placeholder="password" formControlName="password" id="password" class="form-control" [class.is-invalid]="submitted && registerForm.get('password')?.errors">
           <label for="password">Password</label>
           <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('password')?.hasError('required')">Password is required</span>
-
         </div>
+
+        <div class="form-floatin" *ngIf="errorMessages.length">
+          <app-validation [errorMessages]="errorMessages"></app-validation>
+        </div>
+
         <div class="d-grid mt-4 px-4">
           <button class="btn btn-lg btn-info" type="submit">Create Account</button>
         </div>
