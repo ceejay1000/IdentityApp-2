@@ -3,6 +3,7 @@ using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +18,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()
+));
 
 builder.Services.AddScoped<JwtService>();
 
@@ -53,6 +56,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddCors();
+
+// builder.Services.Configure<ApiBehaviorOptions>(options => {
+//     options.InvalidModelStateResponseFactory = actionContext => {
+
+//     }
+// });
 
 var app = builder.Build();
 

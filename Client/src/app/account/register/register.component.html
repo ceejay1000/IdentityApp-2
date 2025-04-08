@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-center">
+  <div class="col-12 col-lg-5">
+    <main class="form-signin">
+      <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="text-center mb-4">
+          <h3 class="mb-3 font-weight-normal">Let's Get Started</h3>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" placeholder="firstName" formControlName="firstName" id="firstName" class="form-control" [class.is-invalid]="submitted && registerForm.get('firstName')?.errors">
+          <label for="firstName">FirstName</label>
+          <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('firstName')?.hasError('required')">FirstName is requird</span>
+
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" placeholder="LastName" formControlName="lastName" id="LastName" class="form-control" [class.is-invalid]="submitted && registerForm.get('lastName')?.errors">
+          <label for="LastName">LastName</label>
+          <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('lastName')?.hasError('required')">LastName is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" placeholder="email" formControlName="email" id="email" class="form-control" [class.is-invalid]="submitted && registerForm.get('email')?.errors">
+          <label for="email">Email</label>
+          <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('email')?.hasError('required')">Email is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" placeholder="password" formControlName="password" id="password" class="form-control" [class.is-invalid]="submitted && registerForm.get('password')?.errors">
+          <label for="password">Password</label>
+          <span class="text-danger" *ngIf="submitted && submitted && registerForm.get('password')?.hasError('required')">Password is required</span>
+
+        </div>
+        <div class="d-grid mt-4 px-4">
+          <button class="btn btn-lg btn-info" type="submit">Create Account</button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center">
+        <a class="btn btn-link"><h6>Have an account</h6></a>
+      </div>
+    </main>
+  </div>
+</div>
