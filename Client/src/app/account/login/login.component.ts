@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/shared/shared.service';
 import { AccountService } from '../account.service';
+import { take } from 'rxjs';
+import { User } from 'src/app/shared/models/UserDto';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +16,25 @@ export class LoginComponent  implements OnInit{
   loginForm: FormGroup = new FormGroup({});
   submitted = false;
     errorMessages: string[] = [];
+  returnUrl: string | null = null;
 
-    constructor(private sharedService: SharedService, private accountService: AccountService, private formBuilder: FormBuilder, private router: Router) {
+    constructor(private route: ActivatedRoute, private sharedService: SharedService, private accountService: AccountService, private formBuilder: FormBuilder, private router: Router) {
+      this.accountService.$user.pipe(take(1)).subscribe({
+        next: (user: User | null) => {
+          if (user){
+            this.router.navigateByUrl("/")
+          } else {
+            this.route.queryParamMap.subscribe({
+              next: (params) => {
+                this.returnUrl = params.get('')
+              }
+            })
+          }
+        },
+        error: ()=> {
+
+        }
+      })
     }
   ngOnInit(): void {
     this.initializeForm();
@@ -23,7 +42,7 @@ export class LoginComponent  implements OnInit{
 
   initializeForm(){
     this.loginForm = this.formBuilder.group({
-      username: ["", [Validators.required]],
+      userName: ["", [Validators.required]],
       password: ["", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     })
   }
@@ -36,8 +55,11 @@ export class LoginComponent  implements OnInit{
       this.accountService.login(this.loginForm.value).subscribe({
         next:(res: any)=> {
           console.log(res);
-          this.sharedService.showNotification(true, res.valueOf.title, res.valueOf.message)
-          this.router.navigateByUrl("/account/login");
+          if (this.returnUrl){
+            this.router.navigateByUrl(this.returnUrl)
+          }
+          //this.sharedService.showNotification(true, res.valueOf.title, res.valueOf.message)
+          this.router.navigateByUrl("/");
         },
         complete:() => {},
         error:(err)=> {

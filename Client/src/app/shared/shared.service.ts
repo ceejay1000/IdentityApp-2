@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { NotificationComponent } from './models/notification/notification.component';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,6 @@ export class SharedService {
       }
     }
 
-    this.bsModalRef = this.modalService.show(Notification, initialState);
+    this.bsModalRef = this.modalService.show(NotificationComponent, initialState);
   }
 }
