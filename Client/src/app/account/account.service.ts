@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Register} from "../shared/models/Register";
+import {Register} from "../shared/models/account/Register";
 import {environment} from "../../environments/environment.development";
-import { Login } from '../shared/models/login';
-import { User } from '../shared/models/UserDto';
+import { Login } from '../shared/models/account/login';
+import { User } from '../shared/models/account/UserDto';
 import { map, of, ReplaySubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { ConfirmEmail } from '../shared/models/account/confirmEmail';
+import { ResetPassword } from '../shared/models/account/ResetPassword';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
- 
  
   private userSource = new ReplaySubject<User | null>(1);
   $user = this.userSource.asObservable();
@@ -39,6 +40,10 @@ export class AccountService {
     );
   }
 
+  confirmEmail(confirmEmail: ConfirmEmail) {
+    return this.http.put(`${environment.appUrl}/api/account/confirm-email`, confirmEmail)
+  }
+
   login(model: Login) {
     return this.http.post<any>(`${environment.appUrl}api/account/login`, model).pipe(
       map((user: User) => {
@@ -54,6 +59,19 @@ export class AccountService {
     localStorage.removeItem(environment.userKey);
     this.userSource.next(null);
     this.router.navigateByUrl("/")
+  }
+
+  resendEmailConfirmationLink(email: string){
+    return this.http.post(`${environment.appUrl}/api/account/resend-email-confirmation-link/${email}`, {})
+  }
+
+  resetPassword(model: ResetPassword) {
+    return this.http.put(`${environment.appUrl}/api/account/reset-password`, model)
+  }
+
+
+  forgotUsernameOrPassword(email: string) {
+    return this.http.post(`${environment.appUrl}/api/account/forgot-username-or-password/${email}`, {})
   }
 
   getJWT(){

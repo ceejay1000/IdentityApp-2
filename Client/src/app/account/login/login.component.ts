@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/shared/shared.service';
 import { AccountService } from '../account.service';
 import { take } from 'rxjs';
-import { User } from 'src/app/shared/models/UserDto';
+import { User } from 'src/app/shared/models/account/UserDto';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +12,7 @@ import { User } from 'src/app/shared/models/UserDto';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent  implements OnInit{
+
 
   loginForm: FormGroup = new FormGroup({});
   submitted = false;
@@ -73,6 +74,11 @@ export class LoginComponent  implements OnInit{
         }
       })
     }
+  }
+
+  resendEmailConfirmationLink() {
+    this.router.navigateByUrl("account/send-email/resend-email-confirmation-link")
+    
   }
 
 }

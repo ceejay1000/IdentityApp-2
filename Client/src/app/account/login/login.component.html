@@ -24,10 +24,11 @@
 
       <div class="form-floatin" *ngIf="errorMessages.length">
         <app-validation [errorMessages]="errorMessages"></app-validation>
+        <a class="btn btn-link" (click)="resendEmailConfirmationLink()" *ngIf="errorMessages[0].includes('Please confirm your email')">Click here to resend confirmation link</a>
       </div>
 
       <div class="mt-4 text-center">
-        <a class="btn btn-link"><h6>Forgot username or password</h6></a>
+        <a class="btn btn-link" routerLink="/account/send-email/forgot-username-or-password"><h6>Forgot username or password</h6></a>
       </div>
     </main>
   </div>

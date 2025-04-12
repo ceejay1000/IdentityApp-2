@@ -1,0 +1,9 @@
+<div class="container text-center">
+    <a href="" class="btn btn-primary" routerLink="/account/login">Login</a>
+</div>
+
+<div class="container text-center" *ngIf="!success">
+    <a class="btn btn-link" (click)="resendConfirmationLink()">
+        Click to resend Email Confirmation link
+    </a>
+</div>

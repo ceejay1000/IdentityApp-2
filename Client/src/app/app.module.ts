@@ -13,6 +13,9 @@ import {SharedModule} from "./shared/shared.module";
 import { PlayComponent } from './play/play.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
+import { ConfirmEmailComponent } from './account/confirm-email/confirm-email.component';
+import { SendEmailComponent } from './account/send-email/send-email.component';
+import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
     HomeComponent,
     LoginComponent,
     RegisterComponent,
-    PlayComponent
+    PlayComponent,
+    ConfirmEmailComponent,
+    SendEmailComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

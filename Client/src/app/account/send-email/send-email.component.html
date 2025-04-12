@@ -1,0 +1,38 @@
+<div class="d-flex justify-content-center" *ngIf="mode">
+    <div class="col-12 col-lg-5">
+        <main class="form-signin">
+            <form [formGroup]="emailForm" (ngSubmit)="sendEmail()">
+        <div class="text-center mb-4">
+          <h3 class="mb-3 font-weight-normal">
+            <span *ngIf="mode.includes('resend-email-confirmation-link')">
+                Resend email confirmation link
+            </span>
+            <span *ngIf="mode.includes('forgot-username-or-password')">
+                Retrieve your username or password
+            </span>
+          </h3>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" placeholder="email" formControlName="email" id="email" class="form-control" [class.is-invalid]="submitted && emailForm.get('email')?.errors">
+          <label for="email">Email</label>
+          <span class="text-danger" *ngIf="submitted && submitted && emailForm.get('email')?.hasError('required')">Email is required</span>
+        </div>
+
+        <div class="form-floatin" *ngIf="errorMessages.length">
+          <app-validation [errorMessages]="errorMessages"></app-validation>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="d-grid">
+                     <button class="btn btn-bloc btn-success" type="submit">Send Email</button>
+                </div>
+                <div  class="d-grid">
+                     <button class="btn btn-bloc btn-danger" type="submit" (click)="cancel()">Cancel</button>
+                </div>
+            </div>
+        </div>
+      </form>
+        </main>
+    </div>
+</div>
