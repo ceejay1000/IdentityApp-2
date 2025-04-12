@@ -23,6 +23,7 @@ builder.Services.AddDbContext<Context>(options =>
 ));
 
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddIdentityCore<User>(options =>
 {
