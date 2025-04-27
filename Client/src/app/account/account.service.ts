@@ -8,6 +8,8 @@ import { map, of, ReplaySubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { ConfirmEmail } from '../shared/models/account/confirmEmail';
 import { ResetPassword } from '../shared/models/account/ResetPassword';
+import { RegisterWithExternal } from '../shared/models/account/RegisterWithExternal';
+import { LoginWithExternal } from '../shared/models/account/LoginWithExternal';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,13 @@ export class AccountService {
   private userSource = new ReplaySubject<User | null>(1);
   $user = this.userSource.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {
+    this.$user.subscribe({
+          next: (user) => {
+            console.log(user)
+          }
+        })
+   }
 
   register(model: Register){
     return this.http.post(`${environment.appUrl}api/account/register`, model);
@@ -61,6 +69,26 @@ export class AccountService {
     this.router.navigateByUrl("/")
   }
 
+  LoginWithThirdParty(model: LoginWithExternal) {
+    return this.http.post<User>(`${environment.appUrl}/api/account/login-with-third-party`, model).pipe(
+      map((user: User) => {
+        if (user) {
+          this.setUser(user);
+        }
+      })
+    )
+  }
+
+  registerWithThirdParty(model: RegisterWithExternal) {
+    return this.http.post<User>(`${environment.appUrl}/api/account/register-with-third-party`, model).pipe(
+      map((user: User) => {
+        if (user) {
+          this.setUser(user);
+        }
+      })
+    );
+  }
+  
   resendEmailConfirmationLink(email: string){
     return this.http.post(`${environment.appUrl}/api/account/resend-email-confirmation-link/${email}`, {})
   }

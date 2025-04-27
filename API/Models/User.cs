@@ -11,6 +11,7 @@ namespace API.Models
         [Required]
         public string LastName { get; set; }
 
+        public string Provider { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

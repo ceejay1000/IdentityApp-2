@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/shared/shared.service';
 import { AccountService } from '../account.service';
 import { take } from 'rxjs';
 import { User } from 'src/app/shared/models/account/UserDto';
+import { DOCUMENT } from '@angular/common';
+import { CredentialResponse } from 'google-one-tap';
+import { jwtDecode } from 'jwt-decode';
+import { LoginWithExternal } from 'src/app/shared/models/account/LoginWithExternal';
 
 @Component({
   selector: 'app-login',
@@ -18,8 +22,10 @@ export class LoginComponent  implements OnInit{
   submitted = false;
     errorMessages: string[] = [];
   returnUrl: string | null = null;
+    @ViewChild("googleButton", {static: true}) googleButton: ElementRef = new ElementRef({});
+  
 
-    constructor(private route: ActivatedRoute, private sharedService: SharedService, private accountService: AccountService, private formBuilder: FormBuilder, private router: Router) {
+    constructor(@Inject(DOCUMENT) private _document: Document, private route: ActivatedRoute, private sharedService: SharedService, private accountService: AccountService, private formBuilder: FormBuilder, private router: Router) {
       this.accountService.$user.pipe(take(1)).subscribe({
         next: (user: User | null) => {
           if (user){
@@ -39,6 +45,7 @@ export class LoginComponent  implements OnInit{
     }
   ngOnInit(): void {
     this.initializeForm();
+    this.initializeGoogleButton();
   }
 
   initializeForm(){
@@ -76,9 +83,45 @@ export class LoginComponent  implements OnInit{
     }
   }
 
+    private initializeGoogleButton() {
+      (window as any).onGoogleLibraryLoad = () => {
+        // @ts-ignore
+        google.accounts.id.initialize({client_id: "22201231380-ju5vg2vmdmkklf6n08k0mopcii62j4up.apps.googleusercontent.com",
+          callback: this.googleCallback.bind(this),
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+  
+        // @ts-ignore
+        google.accounts.id.renderButton(
+          this.googleButton.nativeElement,
+          {size: "medium", shape: "rectangular", text: "signin_with", logo_alignment: "center"}
+        )
+      }
+    }
+  
+    private async googleCallback(response: CredentialResponse){
+      console.log(response)
+      const decodedToken: any = jwtDecode(response.credential);
+  //    this.router.navigateByUrl(`/account/register.third-party/google/access_token=${response.credential}&userId=${decodedToken.sub}`)
+      this.accountService.LoginWithThirdParty(new LoginWithExternal(response.credential, decodedToken.sub, "google"))
+      .subscribe({
+        next: _ => {
+          if (this.returnUrl){
+            this.router.navigateByUrl(this.returnUrl)
+          } else {
+            this.router.navigateByUrl("/")
+          }
+        }, 
+        error: error => {
+          this.sharedService.showNotification(false, "failed", error.error)
+        }
+      })
+  
+    }
+
   resendEmailConfirmationLink() {
-    this.router.navigateByUrl("account/send-email/resend-email-confirmation-link")
-    
+    this.router.navigateByUrl("account/send-email/resend-email-confirmation-link");
   }
 
 }

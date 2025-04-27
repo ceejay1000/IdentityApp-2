@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace API.Services
 {
@@ -20,17 +21,21 @@ namespace API.Services
             _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         }
 
-        public string CreateJwt(User user)
+        public async Task<string> CreateJwt(User user)
         {
             var userClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),          
-                new Claim(ClaimTypes.Email, user.Email!),          
-                new Claim(ClaimTypes.GivenName, user.FirstName),  
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.GivenName, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName),
             };
 
             var credentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha256);
+
+            // Add roles to claims
+            var roles = await _userManager.GetRolesAsync(user);
+            userClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -38,8 +43,8 @@ namespace API.Services
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = credentials,
                 Issuer = _configuration["Jwt:Issuer"],
-               // Audience = _configuration["Jwt:Audience"]
-            };  
+                // Audience = _configuration["Jwt:Audience"]
+            };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwt = tokenHandler.CreateToken(tokenDescriptor);

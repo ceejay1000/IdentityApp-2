@@ -7,6 +7,7 @@ import {NotFoundComponent} from "../shared/components/errors/not-found/not-found
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { SendEmailComponent } from './send-email/send-email.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { RegisterWithThirdPartyComponent } from './register-with-third-party/register-with-third-party.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,8 @@ const routes: Routes = [
   { path: 'confirm-email', component: ConfirmEmailComponent},
   { path: 'send-email/:mode', component: SendEmailComponent},
   { path: 'reset-password', component: ResetPasswordComponent},
+  { path: 'register/third-party/:provider', component: RegisterWithThirdPartyComponent },
+
 
   {path: '**', component: NotFoundComponent},
 ]

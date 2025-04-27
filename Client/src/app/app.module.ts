@@ -16,6 +16,7 @@ import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
 import { ConfirmEmailComponent } from './account/confirm-email/confirm-email.component';
 import { SendEmailComponent } from './account/send-email/send-email.component';
 import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
+import { RegisterWithThirdPartyComponent } from './account/register-with-third-party/register-with-third-party.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ResetPasswordComponent } from './account/reset-password/reset-password.
     PlayComponent,
     ConfirmEmailComponent,
     SendEmailComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    RegisterWithThirdPartyComponent
   ],
   imports: [
     BrowserModule,
