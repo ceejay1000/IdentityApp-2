@@ -62,9 +62,29 @@ namespace API.Controllers
 
             var result = await signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
+            if (result.IsLockedOut)
+            {
+                return Unauthorized($"User is locked out until {user.LockoutEnd}");
+            }
+
             if (!result.Succeeded)
             {
-                return Unauthorized("Invalid password");
+
+                if (user.UserName != "admin")
+                {
+                    await userManager.AccessFailedAsync(user);
+                    if (user.AccessFailedCount >= 3)
+                    {
+                        await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(1));
+                        return Unauthorized("Too many failed attempts. User is locked out. Please try again after 24 hours");
+                    }
+                }
+            }
+
+            if (result.Succeeded)
+            {
+                await userManager.ResetAccessFailedCountAsync(user);
+                await userManager.SetLockoutEndDateAsync(user, null);
             }
             var userDto = CreateApplicationUserDto(user);
             return Ok(userDto);
@@ -132,6 +152,8 @@ namespace API.Controllers
             var result = await userManager.CreateAsync(newUser, model.Password);
 
             if (!result.Succeeded) return BadRequest(result.Errors);
+
+            await userManager.AddToRoleAsync(newUser, SD.Player);
 
             try
             {
@@ -204,7 +226,9 @@ namespace API.Controllers
             };
 
             var result = await userManager.CreateAsync(userToAdd);
+
             if (!result.Succeeded) return BadRequest(result.Errors);
+            await userManager.AddToRoleAsync(userToAdd, SD.Player);
 
             return await CreateApplicationUserDto(userToAdd);
         }
@@ -327,7 +351,6 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return BadRequest("Invalid token please try again");
-
             }
         }
 
